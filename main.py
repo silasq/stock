@@ -1,24 +1,26 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
+# import sys
+# reload(sys)
+# sys.setdefaultencoding('utf-8')
 
-from analyze import mean_deal
 from datetime import *
+import get_all_stock
+import get_hist
+import index
+from analyze import *
+import focus
+import send_mail
 
 if __name__ == "__main__":
-    mean_deal_result = mean_deal.get_mean_deal()
+    index.refresh_all() # 更新指数信息
+    get_all_stock.get()  # 更新股票数据库，对新增股票代码新建数据表
+    get_hist.refresh_all()  # 更新股票数据
 
-    today_date = datetime.now().strftime("%Y-%m-%d")
+    mean_deal.get_mean_deal() # 更新关注列表
+    html_file = focus.trace_focus("mean_deal.csv")
+    html_text = open(html_file).readlines()
+    send_mail.send_mail(''.join(html_text))
 
-    recode_file = open("stock_recode_"+ today_date,'w')
 
-    mail_text = "请关注："
-    for i in range(0,len(mean_deal_result)):
-        mail_text += mean_deal_result[i]+","
-
-    print >> recode_file,mail_text
-
-    #send_mail.send_mail(mail_text)

@@ -11,13 +11,16 @@ def refresh_focus():
     return
 
 
-def read_focus():
+def trace_focus(focus_file=""):
+    if focus_file == "":
+        return False
+
     log_file = open("log/focus.log", 'a+')
     log.write(log_file, "focus analyze start!")
 
-    # 从focus.csc文件中获取最近5日的关注列表
+    # 从focus.csv文件中获取最近5日的关注列表
     all_focus = []
-    with open('focus/mean_deal.csv','r') as f:
+    with open('focus/%s' % focus_file, 'r') as f:
         lines = f.readlines()
         if len(lines) < 5:
             line_cut = lines
@@ -29,7 +32,9 @@ def read_focus():
 
     log.write(log_file, "get old focus list succeed!")
 
-    f_change = open('focus/p_change_' + make_data.last_trade_date()[0] + ".html", 'w')
+    result_file = 'focus/%s_%s.html' % (focus_file, make_data.last_trade_date()[0])
+
+    f_change = open(result_file, 'w')
     f_change.write("<html>\n<body>\n")
 
     # 获取关注股票的近几日走势
@@ -44,10 +49,8 @@ def read_focus():
         f_change.write('<tr align = "right">\n')
         f_change.write('<th>%s</th>\n' % "股票代码")
         f_change.write('<th>%s</th>\n' % "股票名称")
-        print make_data.last_trade_date()[0]
-        print all_focus[i][0]
-        for l in list(pd.date_range(start=all_focus[i][0],end=make_data.last_trade_date()[0])):
-            f_change.write('<th>%s</th>\n' % str(l)[5:10])
+        for l in make_data.get_trade_dates(date_start=all_focus[i][0],date_end=make_data.last_trade_date()[0]):
+            f_change.write('<th>%s</th>\n' % l)
         f_change.write("</tr>\n")
 
         for j in range(1,len(all_focus[i])):
@@ -73,5 +76,4 @@ def read_focus():
 
     log.write(log_file, "get old focus price change succeed!")
 
-
-read_focus()
+    return result_file

@@ -4,8 +4,9 @@ basics_bak/.DS_Store
 .DS_Store
 test.py
 *.csv
-*.txt
-*.log
 *.db
-index/*
-focus/*
+.idea/
+basics_bak/
+focus/
+index/
+log/
