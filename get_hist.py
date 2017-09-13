@@ -5,15 +5,8 @@ import tushare as ts
 from sqlalchemy import create_engine
 import sqlite3
 import pandas as pd
-from datetime import *
 import log
 import make_data
-
-log_file = open("log/get_hist.log", 'a+')
-con = sqlite3.connect('database/History.db')
-query1 = "select name from sqlite_master where type='table' order by name"
-stocklist = pd.read_sql(query1, con).name
-engine = create_engine('sqlite:///database/History.db', echo = False)
 import progressbar
 
 
@@ -21,6 +14,12 @@ import progressbar
 # 批量更新所有股票历史数据
 #
 def refresh_all():
+    log_file = open("log/get_hist.log", 'a+')
+    con = sqlite3.connect('database/History.db')
+    query1 = "select name from sqlite_master where type='table' order by name"
+    stocklist = pd.read_sql(query1, con).name
+    engine = create_engine('sqlite:///database/History.db', echo=False)
+
     log.write(log_file, "开始更新股票数据!")
 
     # count[0]:新增股票记录数

@@ -4,10 +4,10 @@ import tushare as ts
 import log
 import os
 
-log_file = open("log/index.log", 'a+')
-
 
 def refresh_all():
+    log_file = open("log/index.log", 'a+')
+
     log.write(log_file,"refresh all index data start!")
 
     # 若果database目录不存在，则新建

@@ -7,8 +7,6 @@
 
 import tushare as ts
 from sqlalchemy import *
-import sqlite3
-import pandas as pd
 import os
 import log
 import make_data
