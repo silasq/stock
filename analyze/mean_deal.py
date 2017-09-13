@@ -63,6 +63,10 @@ def get_mean_deal(target_date=''):
     pbar.finish()
     log.write(log_file, "完成抓取%s日线突破股票列表，共获得%s只股票" % (target_date, len(result)))
 
+    # 如果记录文件不存在，则新建
+    if not os.path.exists('focus/mean_deal.csv'):
+        os.mknod('focus/mean_deal.csv')
+
     # 如果获取日期为现有记录的下一个交易日，则添加记录
     result_file = open('focus/mean_deal.csv', 'r')
     result_file_lines = result_file.readlines()
@@ -82,9 +86,6 @@ def get_mean_deal(target_date=''):
 
     # 如果正好相差一天，则更新记录
     log.write(log_file, "更新记录文件")
-    # 如果记录文件不存在，则新建
-    if not os.path.exists('focus/mean_deal.csv'):
-        os.mknod('focus/mean_deal.csv')
     result_file = open('focus/mean_deal.csv', 'a+')
     result_file.write(target_date + ',' + ','.join(result) + '\n')
     result_file.close()
