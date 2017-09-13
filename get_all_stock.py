@@ -24,6 +24,9 @@ def get():
     engine = create_engine('sqlite:///database/History.db', echo=False)
     metadata = MetaData(engine)
 
+    # 建立备份目录
+    if not os.path.exists("basics_bak"):
+        os.mkdir("basics_bak")
     # 如果存在旧csv文件，则改名后备份，若备份失败则终止程序
     if os.path.exists("database/stock_basics.csv"):
         if os.system('mv database/stock_basics.csv basics_bak/stock_basics_`date "+%Y-%m-%d"`.csv') == 0:

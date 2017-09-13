@@ -9,7 +9,7 @@ import progressbar
 
 # 找出10天内5日线首次突破20日线，且成交量翻倍的股票
 # 参数target_date为分析日期，默认为最后一个交易日
-def get_mean_deal(target_date):
+def get_mean_deal(target_date=''):
     # 设置默认值，无法设为默认参数因为第一次运行会报错
     if target_date == '':
         target_date = make_data.last_trade_date()[0]
