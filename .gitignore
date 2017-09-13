@@ -6,7 +6,3 @@ test.py
 *.csv
 *.db
 .idea/
-basics_bak/
-focus/
-index/
-log/
