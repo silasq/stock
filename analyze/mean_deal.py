@@ -5,6 +5,7 @@ import pandas as pd
 import make_data
 import log
 import progressbar
+import os
 
 
 # 找出10天内5日线首次突破20日线，且成交量翻倍的股票
@@ -81,6 +82,9 @@ def get_mean_deal(target_date=''):
 
     # 如果正好相差一天，则更新记录
     log.write(log_file, "更新记录文件")
+    # 如果记录文件不存在，则新建
+    if not os.path.exists('focus/mean_deal.csv'):
+        os.mknod('focus/mean_deal.csv')
     result_file = open('focus/mean_deal.csv', 'a+')
     result_file.write(target_date + ',' + ','.join(result) + '\n')
     result_file.close()
