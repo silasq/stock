@@ -3,7 +3,7 @@
 import tushare as ts
 import log
 import os
-
+import datetime
 
 def refresh_all():
     log_file = open("log/index.log", 'a+')

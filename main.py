@@ -17,7 +17,7 @@ if __name__ == "__main__":
     get_all_stock.get()  # 更新股票数据库，对新增股票代码新建数据表
     get_hist.refresh_all()  # 更新股票数据
 
-    mean_deal.get_mean_deal() # 更新关注列表
+    mean_deal.get() # 更新关注列表
     html_file = focus.trace_focus("mean_deal.csv")
     html_text = open(html_file).readlines()
     send_mail.send_mail(''.join(html_text))

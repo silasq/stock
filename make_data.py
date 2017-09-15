@@ -104,4 +104,4 @@ def get_trade_dates(date_start, date_end='', n=0):
 def get_stock_name(code):
     df = pd.read_csv("database/stock_basics.csv", header=0,dtype={'code':str})
     df = df.set_index('code')
-    return df.loc[code,'name']
+    return df.loc[code, 'name']

@@ -8,8 +8,8 @@ import progressbar
 import os
 
 
-# 找出10天内5日线首次突破20日线，且成交量翻倍的股票
-# 参数target_date为分析日期，默认为最后一个交易日
+#
+#
 def get(target_date=''):
     log_file = open("log/analyze.log", 'a+')
 
@@ -21,18 +21,17 @@ def get(target_date=''):
             log.write(log_file, '%s 非交易日或超出交易记录范围！' % target_date)
             return False
 
-
     con = sqlite3.connect('database/History.db')
     query1 = "select name from sqlite_master where type='table' order by name"
     stocklist = pd.read_sql(query1, con).name
     result = []  # 保存抓取股票列表
 
-    log.write(log_file, "开始抓取%s日线突破股票列表" % target_date)
+    log.write(log_file, "开始抓取%s清晨之星股票列表" % target_date)
 
     # 准备进度条
     bar = 0;
     bar_total = len(stocklist)
-    pbar = progressbar.ProgressBar(max_value= bar_total).start()
+    pbar = progressbar.ProgressBar(max_value=bar_total).start()
 
     for stock in stocklist:
         pbar.update(bar)  # 更新进度条
@@ -48,32 +47,38 @@ def get(target_date=''):
         # 若无法找到目标日的交易数据（停牌），跳过
         if target_date not in df.index:
             continue
-
+        # 只取2017年至目标日的记录
         df.index = pd.to_datetime(df.index)
-        df = df["2017-01-01":target_date]  # 只取2017年至目标日的记录
+        df = df["2017-01-01":target_date]
 
-        close = df.close
-        mean5 = close.rolling(window=5,center=False).mean()
-        mean20 = close.rolling(window=20,center=False).mean()
-        if mean5[-1]>mean20[-1]:
-            if int(df.ix[-1,"volume"]) > int(df.ix[-2,"volume"])*2:
-                sign = True
-                for i in range(-2,-10,-1):
-                    if mean5[i] > mean20[i]:
-                        sign = False
-                if sign:
-                    #result_file.write(stock + ',')
+        if len(df) < 10:
+            continue
+
+        price_close = df.close
+        price_open = df.open
+        clop = price_close - price_open
+        ret=price_close/price_close.shift(1)-1
+        clop_wav = abs(clop.describe()["25%"]) * 4
+
+        if all([clop[-3] < clop_wav*(-1), abs(clop[-2]) < clop_wav/2 , clop[-1] > clop_wav/2,abs(clop[-1] > abs(clop[-3] * 0.5))]):
+            if all([price_open[-2] < price_open[-1], price_open[-2] < price_close[-3], price_close[-2] < price_open[-1],price_close[-2] < price_close[-3]]):
+                if all([ret[-4] < 0, ret[-5] < 0]):
                     result.append(stock)
 
+        # if all([clop[-2] < clop_wav * (-1), abs(clop[-1]) < clop_wav/2]):
+        #     if all([price_open[-1] < price_close[-2], price_close[-1] < price_close[-2]]):
+        #         if all([ret[-3] < 0, ret[-4] < 0]):
+        #             print str(stock) + ":" + str(df.index[-2]) + " looks lisk!"
+
     pbar.finish()
-    log.write(log_file, "完成抓取%s日线突破股票列表，共获得%s只股票" % (target_date, len(result)))
+    log.write(log_file, "完成抓取%s清晨之星股票列表，共获得%s只股票" % (target_date, len(result)))
 
     # 如果记录文件不存在，则新建
-    if not os.path.exists('focus/mean_deal.csv'):
-        os.mknod('focus/mean_deal.csv')
+    if not os.path.exists('focus/sunrise.csv'):
+        os.mknod('focus/sunrise.csv')
 
     # 如果获取日期为现有记录的下一个交易日，则添加记录
-    result_file = open('focus/mean_deal.csv', 'r')
+    result_file = open('focus/sunrise.csv', 'r')
     result_file_lines = result_file.readlines()
     result_file.close()
     if len(result_file_lines) != 0:  # 如果文件没有记录，直接加入记录
@@ -89,7 +94,7 @@ def get(target_date=''):
 
     # 如果正好相差一天，则更新记录
     log.write(log_file, "更新记录文件")
-    result_file = open('focus/mean_deal.csv', 'a+')
+    result_file = open('focus/sunrise.csv', 'a+')
     # 如果获取股票数为0，则只记录日期
     if len(result) == 0:
         result_file.write(target_date + '\n')
