@@ -11,7 +11,7 @@ import os
 #
 #
 def get(target_date=''):
-    log_file = open("log/analyze.log", 'a+')
+    log_file = open("log/analyze.log", 'a+', buffering=0)
 
     # 设置默认值，无法设为默认参数因为第一次运行会报错
     if target_date == '':

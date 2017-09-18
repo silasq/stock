@@ -26,6 +26,7 @@ def send_mail(mail_text):
     #发送主题
     subject = datetime.now().strftime("%Y-%m-%d") + "行情分析"
     msg['Subject'] = Header(subject,'utf-8')
+
     for i in range(0,6):
         try:
             log.write(log_file, '开始发送邮件。')
@@ -34,9 +35,12 @@ def send_mail(mail_text):
             smtp.sendmail(from_addr,to_addr,msg.as_string())
             smtp.quit()
             log.write(log_file, '邮件发送成功。')
+            log_file.close()
             break
         except smtplib.SMTPException,e:
             # 如果发送失败，下次等待尝试事件增加一倍
             log.write(log_file, e)
             log.write(log_file, '邮件发送失败，%s秒后重试' % 2**i)
             time.sleep(2**i)
+
+    log_file.close()

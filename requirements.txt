@@ -6,6 +6,7 @@ nmap==0.0.1
 numpy==1.13.1
 pandas==0.20.3
 progressbar2==3.34.2
+requests==2.18.4
 six==1.10.0
 SQLAlchemy==1.1.13
 tushare==0.8.9
